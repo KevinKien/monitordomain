@@ -1,6 +1,6 @@
 
 ## Install 
-- Install orther tool
+- Install other tool
 ```
 go get github.com/joho/godotenv
 go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
