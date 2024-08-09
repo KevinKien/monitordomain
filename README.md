@@ -1,5 +1,5 @@
 
-## Intergration
+## Integration
 - [x] findomain 
 - [x] Crt.sh Database
 - [x] Subfinder
