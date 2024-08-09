@@ -2,9 +2,12 @@ package main
 
 import (
     "database/sql"
+    "encoding/json"
     "flag"
     "fmt"
+    "io/ioutil"
     "log"
+    "net/http"
     "os"
     "os/exec"
     "strings"
@@ -70,6 +73,10 @@ func getSubdomains(domain string) []string {
     findomainSubdomains := runFindomain(domain)
     subdomains = append(subdomains, findomainSubdomains...)
 
+    // Sử dụng Crt.sh
+    crtshSubdomains := runCrtsh(domain)
+    subdomains = append(subdomains, crtshSubdomains...)
+
     return unique(subdomains)
 }
 
@@ -105,6 +112,47 @@ func runFindomain(domain string) []string {
     for _, line := range lines {
         if line != "" {
             subdomains = append(subdomains, line)
+        }
+    }
+
+    return subdomains
+}
+
+func runCrtsh(domain string) []string {
+    var subdomains []string
+
+    // Gửi yêu cầu GET đến crt.sh
+    url := fmt.Sprintf("https://crt.sh/?q=%s&output=json", domain)
+    resp, err := http.Get(url)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer resp.Body.Close()
+
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    var result []struct {
+        NameValue string `json:"name_value"`
+    }
+
+    if err := json.Unmarshal(body, &result); err != nil {
+        log.Fatal(err)
+    }
+
+    seen := make(map[string]struct{})
+    for _, item := range result {
+        names := strings.Split(item.NameValue, "\n")
+        for _, name := range names {
+            name = strings.TrimSpace(name)
+            if strings.HasSuffix(name, domain) && name != domain {
+                if _, exists := seen[name]; !exists {
+                    seen[name] = struct{}{}
+                    subdomains = append(subdomains, name)
+                }
+            }
         }
     }
 
