@@ -50,6 +50,7 @@ GOOS=windows GOARCH=amd64 go build -o httpsmonitor.exe .
 ```
 
 ## Running
+- Edit file .env
 - Run with command
 ```
 ./monitordomain -t example.com
