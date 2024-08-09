@@ -1,4 +1,15 @@
 
+## Intergration
+- [x] findomain 
+- [x] Crt.sh Database
+- [x] Subfinder
+- [x] Puredns
+- [ ] Virustotal
+- [ ] Threatcrowd
+- [ ] Certspotter
+- [ ] SecurityTrails
+- [ ] ....
+
 ## Install 
 - Install other tool
 ```
